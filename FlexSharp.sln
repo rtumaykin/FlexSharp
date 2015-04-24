@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{30777170
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rouse.Sales", "tests\Rouse.Sales\Rouse.Sales.csproj", "{38882AA6-FFC5-4C7C-86CA-579DC3544A77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{4491D80C-68B2-4CBC-AF69-394280AB3B33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{38882AA6-FFC5-4C7C-86CA-579DC3544A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38882AA6-FFC5-4C7C-86CA-579DC3544A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38882AA6-FFC5-4C7C-86CA-579DC3544A77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4491D80C-68B2-4CBC-AF69-394280AB3B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4491D80C-68B2-4CBC-AF69-394280AB3B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4491D80C-68B2-4CBC-AF69-394280AB3B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4491D80C-68B2-4CBC-AF69-394280AB3B33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,5 +45,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EC392741-B29F-4F9B-83C9-56ECB6D83FC6} = {80344D9E-7EFC-4052-BEB7-4133968FD263}
 		{38882AA6-FFC5-4C7C-86CA-579DC3544A77} = {30777170-B456-4143-9BB8-9BC174016D09}
+		{4491D80C-68B2-4CBC-AF69-394280AB3B33} = {30777170-B456-4143-9BB8-9BC174016D09}
 	EndGlobalSection
 EndGlobal
