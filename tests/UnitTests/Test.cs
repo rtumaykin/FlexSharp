@@ -62,7 +62,7 @@ namespace UnitTests
                 };
 
 
-                var inst = ef.Instantiate(engineId.ToString("N"), "1", null);
+                var inst = ef.Instantiate(engineId.ToString("N"), null);
                 var ret = inst.Compute(dataIn) as Dictionary<string, string>;
 
                 var x = ret;

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HotAssembly;
+using Ionic.Zip;
+using Newtonsoft.Json;
 
 namespace FlexSharp
 {
@@ -20,6 +22,19 @@ namespace FlexSharp
         protected Guid Randomizer
         {
             get { return _randomizer; }
+        }
+
+        protected string Namespace
+        {
+            get { return string.Format("ns_{0:N}", Randomizer); }
+        }
+
+        protected string ClassName
+        {
+            get
+            {
+                return string.Format("class_{0:N}", Randomizer);
+            }
         }
 
         private readonly object _data;
@@ -95,7 +110,25 @@ namespace FlexSharp
 
             if (ret.Errors.Count == 0)
             {
-                _hotAssemblyPersistenceProvider.PersistBundle(Randomizer.ToString("N"), ret.PathToAssembly);
+                var manifest = new Manifest
+                {
+                    AssemblyName = Path.GetFileName(ret.PathToAssembly),
+                    FullyQualifiedClassName = string.Format("{0}.{1}", Namespace, ClassName)
+                };
+
+                var tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(tempFolder);
+
+                File.WriteAllText(Path.Combine(tempFolder, "manifest.json"), JsonConvert.SerializeObject(manifest));
+
+                using (var zip = new ZipFile())
+                {
+                    zip.AddFile(Path.Combine(tempFolder, "manifest.json"), "");
+                    zip.AddFile(ret.PathToAssembly, "");
+                    zip.Save(Path.Combine(tempFolder, "bundle.zip"));
+                }
+
+                _hotAssemblyPersistenceProvider.PersistBundle(Randomizer.ToString("N"), Path.Combine(tempFolder, "bundle.zip"));
             }
 
             return ret;

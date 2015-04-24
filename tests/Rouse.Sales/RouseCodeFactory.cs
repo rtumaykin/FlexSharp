@@ -18,19 +18,6 @@ namespace Rouse.Sales
         {
         }
 
-        private string Namespace
-        {
-            get { return string.Format("ns_{0:N}", Randomizer); }
-        }
-
-        private string ClassName
-        {
-            get
-            {
-                return string.Format("engine_{0:N}", Randomizer);
-            }
-        }
-
         private class ColumnInfo
         {
             public string ColumnName
