@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rouse.Sales", "tests\Rouse.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{4491D80C-68B2-4CBC-AF69-394280AB3B33}"
 EndProject
+Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "FlexSharp.NugetPackage", "source\FlexSharp.NugetPackage\FlexSharp.NugetPackage.nuproj", "{48E0E632-772D-4D80-B89E-0B20CD37CEFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{4491D80C-68B2-4CBC-AF69-394280AB3B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4491D80C-68B2-4CBC-AF69-394280AB3B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4491D80C-68B2-4CBC-AF69-394280AB3B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48E0E632-772D-4D80-B89E-0B20CD37CEFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48E0E632-772D-4D80-B89E-0B20CD37CEFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48E0E632-772D-4D80-B89E-0B20CD37CEFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48E0E632-772D-4D80-B89E-0B20CD37CEFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +52,6 @@ Global
 		{EC392741-B29F-4F9B-83C9-56ECB6D83FC6} = {80344D9E-7EFC-4052-BEB7-4133968FD263}
 		{38882AA6-FFC5-4C7C-86CA-579DC3544A77} = {30777170-B456-4143-9BB8-9BC174016D09}
 		{4491D80C-68B2-4CBC-AF69-394280AB3B33} = {30777170-B456-4143-9BB8-9BC174016D09}
+		{48E0E632-772D-4D80-B89E-0B20CD37CEFA} = {80344D9E-7EFC-4052-BEB7-4133968FD263}
 	EndGlobalSection
 EndGlobal
