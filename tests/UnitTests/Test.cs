@@ -98,22 +98,29 @@ namespace UnitTests
                     var _cnt = cnt;
                     var data = l;
                     l = new List<AssetFieldDataRow>();
-                    tasks.Add(Task.Run(() => Save(data, _cnt)));
+                    tasks.Add(Save(data, _cnt));
                 }
                 cnt++;
             }
 
-            tasks.Add(Task.Run(() => Save(l, Int32.MaxValue)));
+            tasks.Add(Save(l, Int32.MaxValue));
 
             Task.WaitAll(tasks.ToArray());
             Debug.WriteLine("All finished. Total elapsed {0} ms", DateTime.Now.Subtract(start).TotalMilliseconds);
 
         }
 
-        private void Save(IList<AssetFieldDataRow> data, int cnt)
+        private async Task Save(IList<AssetFieldDataRow> data, int cnt)
         {
             var start = DateTime.Now;
-            SQL.Executables.asset.BatchUpdate.Execute(1, new AssetFieldData(data), false, null, 0);
+            await SQL.Executables.asset.BatchUpdate.ExecuteAsync(1, new AssetFieldData(data), false, null, 0);
+            Debug.WriteLine("Data Save for iteration {1} completed. Total elapsed {0} ms", DateTime.Now.Subtract(start).TotalMilliseconds, cnt);
+        }
+
+        private async void Ave(IList<AssetFieldDataRow> data, int cnt)
+        {
+            var start = DateTime.Now;
+            await SQL.Executables.asset.BatchUpdate.ExecuteAsync(1, new AssetFieldData(data), false, null, 0);
             Debug.WriteLine("Data Save for iteration {1} completed. Total elapsed {0} ms", DateTime.Now.Subtract(start).TotalMilliseconds, cnt);
         }
     }
