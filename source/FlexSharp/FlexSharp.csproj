@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HotAssembly, Version=0.9.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HotAssembly.0.9.2\lib\net45\HotAssembly.dll</HintPath>
+    <Reference Include="HotAssembly, Version=0.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HotAssembly.0.9.3\lib\net45\HotAssembly.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="HotAssembly.SqlPersistenceProvider, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
