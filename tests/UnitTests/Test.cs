@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using HotAssembly;
 using NUnit.Framework;
 using Rouse.Sales;
+using Sample;
 using SQL.TableVariables.common;
 
 namespace UnitTests
@@ -23,7 +24,7 @@ namespace UnitTests
             var e = SQL.Enums.common.DataType.DateTime;
 
             var eng =
-                new RouseCodeFactory(new SqlPersistenceProvider(), 
+                new SampleCodeFactory(new SqlPersistenceProvider(), 
                     new CodeFactoryInitializationModel()
                     {
                         ClientId = 1

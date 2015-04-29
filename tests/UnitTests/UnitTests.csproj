@@ -86,9 +86,9 @@
       <Project>{EC392741-B29F-4F9B-83C9-56ECB6D83FC6}</Project>
       <Name>FlexSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Rouse.Sales\Rouse.Sales.csproj">
+    <ProjectReference Include="..\Rouse.Sales\Sample.csproj">
       <Project>{38882AA6-FFC5-4C7C-86CA-579DC3544A77}</Project>
-      <Name>Rouse.Sales</Name>
+      <Name>Sample</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

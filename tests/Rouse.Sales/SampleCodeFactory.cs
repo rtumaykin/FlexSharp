@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FlexSharp;
 using HotAssembly;
+using Rouse.Sales;
 using Rouse.Sales.Rules.Enums.common;
 using Rouse.Sales.Rules.Executables.RulesRepository;
 
-namespace Rouse.Sales
+namespace Sample
 {
-    public class RouseCodeFactory :CodeFactory  
+    public class SampleCodeFactory :CodeFactory  
     {
 
-        public RouseCodeFactory(IPersistenceProvider hotAssemblyPersistenceProvider, CodeFactoryInitializationModel data) 
+        public SampleCodeFactory(IPersistenceProvider hotAssemblyPersistenceProvider, CodeFactoryInitializationModel data) 
             : base(hotAssemblyPersistenceProvider, data)
         {
         }
