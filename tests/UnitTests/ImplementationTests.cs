@@ -21,11 +21,18 @@ namespace UnitTests
 
             var pfp = new FilePersistenceProvider();
             var cf1 = new Sample.SampleCodeFactory(pfp, new CodeFactoryInitializationModel { ClientId = 1 });
-//            var ssssssc = cf1.GetCodeInternal();
-            cf1.CompileAndSave("client1");
+            var code1 = cf1.GetCodeInternal();
+            var cfres1 = cf1.CompileAndSave("client1");
 
+            Assert.That(cfres1.Errors.Count == 0, "There were {0} errors during the compilation. First one was {1}.\rCode: \r{2}",
+                cfres1.Errors.Count, cfres1.Errors[0].ErrorText, code1);
+            
             var cf2 = new Sample.SampleCodeFactory(pfp, new CodeFactoryInitializationModel { ClientId = 2 });
-            cf2.CompileAndSave("client2");
+            var code2 = cf2.GetCodeInternal();
+            var cfres2 = cf2.CompileAndSave("client2");
+
+            Assert.That(cfres2.Errors.Count == 0, "There were {0} errors during the compilation. First one was {1}.\rCode: \r{2}",
+                cfres2.Errors.Count, cfres2.Errors[0].ErrorText, code2);
 
             var ha = new HotAssembly.InstantiatorFactory<Sample.RulesEngine>(pfp);
             ha.Instantiate("client1");
