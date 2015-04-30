@@ -72,6 +72,7 @@
       <DependentUpon>DataAccessLayer.dal</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

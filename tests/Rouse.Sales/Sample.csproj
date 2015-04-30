@@ -59,12 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeFactoryInitializationModel.cs" />
-    <Compile Include="DataAccessLayer.cs">
-      <DependentUpon>DataAccessLayer.dal</DependentUpon>
-    </Compile>
     <Compile Include="DataMockup\Field.cs" />
-    <Compile Include="DataMockup\GetFields.cs" />
-    <Compile Include="DataMockup\GetVariables.cs" />
+    <Compile Include="DataMockup\DataEmulator.cs" />
     <Compile Include="DataMockup\Variable.cs" />
     <Compile Include="SampleCodeFactory.cs" />
     <Compile Include="RulesEngine.cs" />
@@ -79,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Form Include="DataAccessLayer.dal" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

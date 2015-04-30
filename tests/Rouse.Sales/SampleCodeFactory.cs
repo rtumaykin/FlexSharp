@@ -1,22 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FlexSharp;
 using HotAssembly;
 using Rouse.Sales;
-using Rouse.Sales.Rules.Enums.common;
-using Rouse.Sales.Rules.Executables.RulesRepository;
+
 
 namespace Sample
 {
-    public class SampleCodeFactory :CodeFactory  
+    public class SampleCodeFactory :CodeFactory
     {
+        private readonly int _clientId;
 
         public SampleCodeFactory(IPersistenceProvider hotAssemblyPersistenceProvider, CodeFactoryInitializationModel data) 
             : base(hotAssemblyPersistenceProvider, data)
         {
+            _clientId = data.ClientId;
         }
 
-        private class ColumnInfo
+        private class FieldInfo
         {
             public string ColumnName
             {
@@ -24,11 +26,6 @@ namespace Sample
                 set;
             }
             public string DataTypeName
-            {
-                get;
-                set;
-            }
-            public Column_Source ColumnSource
             {
                 get;
                 set;
@@ -64,7 +61,7 @@ namespace Sample
                 get;
                 set;
             }
-            public string ColumnName
+            public int EvaluationOrder
             {
                 get;
                 set;
@@ -91,12 +88,18 @@ namespace Sample
         }
 
         private IList<VariableInfo> _variables;
-        private IList<ColumnInfo> _columns;
+        private IList<FieldInfo> _columns;
 
+#if DEBUG
+        public string GetCodeInternal()
+        {
+            return GetCode();
+        }
+#endif
 
         protected override string GetCode()
         {
-            GetColumnsInfo();
+            GetFieldsInfo();
             GetVariablesInfo();
             var code = "using System;\rusing System.Collections.Generic;\rusing System.Linq;\r" + GetCode_NameSpaceAndBelow();
 
@@ -158,7 +161,7 @@ namespace Sample
             var code = string.Format("private void MapDataToAsset_{0:N}() {{\r", Randomizer);
 
             // initialize all local variables to null
-            code = _columns.Where(column => column.ColumnSource == Column_Source.External)
+            code = _columns
                 .Aggregate(code,
                     (current, column) =>
                         current + string.Format("{0} {1} = null;\r", column.FullDataTypeName, column.LocalVariableName));
@@ -167,7 +170,7 @@ namespace Sample
             code += "foreach (var field in Data)\r{\rswitch (field.Key)\r{";
 
             code =
-                _columns.Where(column => column.ColumnSource == Column_Source.External)
+                _columns
                     .Aggregate(code,
                         (current, column) =>
                             current +
@@ -180,7 +183,7 @@ namespace Sample
 
             code += string.Format("}} _asset_{0:N} = new Asset_{0:N} (", Randomizer);
 
-            code += string.Join(", ", _columns.Where(column => column.ColumnSource == Column_Source.External)
+            code += string.Join(", ", _columns
                 .Select(column => string.Format("{0}", column.LocalVariableName)));
 
             code += ");\r}\r}";
@@ -189,17 +192,13 @@ namespace Sample
 
         private void GetVariablesInfo()
         {
-            _variables =
-                Variables_List.Execute(GetInitializationData<CodeFactoryInitializationModel>().ClientId, null)
-                    .Recordset0.Select(
-                        record => new VariableInfo
-                        {
-                            ColumnName = record.OutputColumnName,
-                            Formula = record.Formula,
-                            Name = record.Name,
-                            DataTypeName = record.DataTypeName
-                        }
-                    ).ToList();
+            _variables = DataMockup.DataEmulator.GetVariablesCollection(_clientId).Select(v => new VariableInfo
+            {
+                Name = v.Name,
+                Formula = v.Formula,
+                EvaluationOrder = v.EvaluationOrder,
+                DataTypeName = v.DataType
+            }).ToList();
         }
 
         private string GetCode_Variables()
@@ -234,7 +233,6 @@ namespace Sample
             var code = string.Format("private object MapVariablesToOutput_{0:N}() {{\rreturn new Dictionary<string, string>{{", Randomizer);
 
             code += string.Join(", ", _variables
-                .Where(variableInfo => !string.IsNullOrWhiteSpace(variableInfo.ColumnName))
                 .Select(variableInfo => variableInfo.DataTypeName == "String"
                     ? string.Format(
                         "{{ \"{0}\", Variables.{0}}}\r",
@@ -258,7 +256,6 @@ namespace Sample
             var code = string.Format("private class Asset_{0:N} {{", Randomizer);
 
             code = _columns
-                .Where(columnInfo => columnInfo.ColumnSource != Column_Source.Computed)
                 .Aggregate(code,
                 (current, column) =>
                     current +
@@ -270,14 +267,12 @@ namespace Sample
             code += string.Format("\rpublic Asset_{0:N}(", Randomizer);
 
             code += string.Join(", ", _columns
-                .Where(column => column.ColumnSource != Column_Source.Computed)
                 .Select(column => string.Format("{0} {1}",
                     column.FullDataTypeName,
                     column.LocalVariableName)));
 
             code += "){";
             code = _columns
-                .Where(column => column.ColumnSource != Column_Source.Computed)
                 .Aggregate(code,
                     (current, column) =>
                         current +
@@ -293,15 +288,13 @@ namespace Sample
             return code;
         }
 
-        private void GetColumnsInfo()
+        private void GetFieldsInfo()
         {
-            _columns = Columns_List.Execute(GetInitializationData<CodeFactoryInitializationModel>().ClientId, null)
-                .Recordset0.Select(record => new ColumnInfo
-                {
-                    ColumnName = record.ColumnName,
-                    DataTypeName = record.DataTypeName,
-                    ColumnSource = (Column_Source)record.SourceId
-                }).ToList();
+            _columns = DataMockup.DataEmulator.GetClientFields(_clientId).Select(f => new FieldInfo
+            {
+                ColumnName = f.Name,
+                DataTypeName = f.DataType
+            }).ToList();
         }
 
     }
