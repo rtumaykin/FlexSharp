@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FlexSharp;
 using HotAssembly;
 using ICSharpCode.NRefactory.CSharp;
-using Rouse.Sales;
-
+using Sample.DataMockup;
 
 namespace Sample
 {
@@ -135,7 +133,7 @@ namespace Sample
         {
             var code =
                 string.Format(
-                    "namespace {0}\r{{\r\tpublic class {1} : Sample.RulesEngine\r\t{{\rpublic {1} (object data) {{}}\r{2}{3}{4}{5}{6}{7}\r\t}}\r}}",
+                    "namespace {0}\r{{\r\tpublic class {1} : Sample.RulesEngine\r\t{{\rpublic {1} () {{}}\r{2}{3}{4}{5}{6}{7}\r\t}}\r}}",
                     Namespace,
                     ClassName,
                     GetCode_PrivateAssetClass(),
@@ -217,7 +215,7 @@ namespace Sample
 
         private void GetVariablesInfo()
         {
-            _variables = DataMockup.DataEmulator.GetVariablesCollection(_clientId).Select(v => new VariableInfo
+            _variables = DataEmulator.GetVariablesCollection(_clientId).Select(v => new VariableInfo
             {
                 Name = v.Name,
                 Formula = v.Formula,
@@ -228,7 +226,7 @@ namespace Sample
 
         private string GetCode_Variables()
         {
-            return string.Join("\r", _variables.Select(
+            return string.Join("\r", _variables.OrderBy(v => v.EvaluationOrder).Select(
                 variable => string.Format("private {0} Compute_{1}_{2:N}(){{\r{3}\r}}\r", variable.FullDataTypeName,
                     variable.Name, Randomizer, variable.Formula)));
         }
@@ -315,7 +313,7 @@ namespace Sample
 
         private void GetFieldsInfo()
         {
-            _columns = DataMockup.DataEmulator.GetClientFields(_clientId).Select(f => new FieldInfo
+            _columns = DataEmulator.GetClientFields(_clientId).Select(f => new FieldInfo
             {
                 ColumnName = f.Name,
                 DataTypeName = f.DataType

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CSharp;
 
 namespace FlexSharp
@@ -14,7 +11,7 @@ namespace FlexSharp
         {
             var compilerParameters = new CompilerParameters
             {
-                CompilerOptions = "/t:library",
+                CompilerOptions = "/t:library /debug",
                 GenerateExecutable = false,
                 GenerateInMemory = checkSyntaxOnly
             };

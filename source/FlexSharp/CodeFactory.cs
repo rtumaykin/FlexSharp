@@ -1,10 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HotAssembly;
 using Ionic.Zip;
 using Newtonsoft.Json;
@@ -104,7 +101,7 @@ namespace FlexSharp
             }
         }
 
-        public CompilerResults CompileAndSave()
+        public CompilerResults CompileAndSave(string bundleId)
         {
             var ret = CompileInternal(false);
 
@@ -128,7 +125,7 @@ namespace FlexSharp
                     zip.Save(Path.Combine(tempFolder, "bundle.zip"));
                 }
 
-                _hotAssemblyPersistenceProvider.PersistBundle(Randomizer.ToString("N"), Path.Combine(tempFolder, "bundle.zip"));
+                _hotAssemblyPersistenceProvider.PersistBundle(bundleId, Path.Combine(tempFolder, "bundle.zip"));
             }
 
             return ret;

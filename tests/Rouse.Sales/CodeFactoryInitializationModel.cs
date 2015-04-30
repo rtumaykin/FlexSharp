@@ -1,4 +1,4 @@
-﻿namespace Rouse.Sales
+﻿namespace Sample
 {
     public class CodeFactoryInitializationModel
     {
