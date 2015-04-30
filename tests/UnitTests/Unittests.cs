@@ -15,7 +15,7 @@ namespace UnitTests
         public void GetCode()
         {
             var cf = new Sample.SampleCodeFactory(null, new CodeFactoryInitializationModel{ ClientId = 1});
-            var c = cf.GetCodeInternal();
+            var ssssssc = cf.GetCodeInternal();
         }
     }
 }

@@ -66,7 +66,7 @@ namespace Sample.DataMockup
             {
                 DataType = "System.Boolean",
                 Name = "Featured",
-                Formula = "return Asset.GarageStorage && Variables.Make == \"Toyota\";",
+                Formula = "return Asset.GarageStorage == true && Variables.Make == \"Toyota\";",
                 EvaluationOrder = 4
             }
         };

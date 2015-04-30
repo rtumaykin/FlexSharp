@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using FlexSharp;
 using HotAssembly;
+using ICSharpCode.NRefactory.CSharp;
 using Rouse.Sales;
 
 
 namespace Sample
 {
-    public class SampleCodeFactory :CodeFactory
+    public class SampleCodeFactory : CodeFactory
     {
         private readonly int _clientId;
 
@@ -43,7 +44,7 @@ namespace Sample
             {
                 get
                 {
-                    return DataTypeName + (DataTypeName == "String" ? "" : "?");
+                    return DataTypeName + ("System.String/String/string".Split('/').Contains(DataTypeName) ? "" : "?");
                 }
             }
 
@@ -75,7 +76,7 @@ namespace Sample
             {
                 get
                 {
-                    return DataTypeName + (DataTypeName == "String" ? "" : "?");
+                    return DataTypeName + ("System.String/String/string".Split('/').Contains(DataTypeName) ? "" : "?");
                 }
             }
             public string LocalVariableName
@@ -103,14 +104,38 @@ namespace Sample
             GetVariablesInfo();
             var code = "using System;\rusing System.Collections.Generic;\rusing System.Linq;\r" + GetCode_NameSpaceAndBelow();
 
-            return code;
+            var formattingOptions = FormattingOptionsFactory.CreateAllman();
+            formattingOptions.AlignElseInIfStatements = true;
+            formattingOptions.ArrayInitializerWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.ChainedMethodCallWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.AutoPropertyFormatting = PropertyFormatting.ForceOneLine;
+            formattingOptions.IndexerArgumentWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.IndexerClosingBracketOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.IndexerDeclarationClosingBracketOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.IndexerDeclarationParameterWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.MethodCallArgumentWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.MethodCallClosingParenthesesOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.MethodDeclarationClosingParenthesesOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.MethodDeclarationParameterWrapping = Wrapping.WrapIfTooLong;
+
+            formattingOptions.NewLineAferIndexerDeclarationOpenBracket = NewLinePlacement.SameLine;
+            formattingOptions.NewLineAferIndexerOpenBracket = NewLinePlacement.SameLine;
+            formattingOptions.NewLineAferMethodCallOpenParentheses = NewLinePlacement.SameLine;
+            formattingOptions.NewLineAferMethodDeclarationOpenParentheses = NewLinePlacement.SameLine;
+
+
+
+
+            var formattedCode = new CSharpFormatter(FormattingOptionsFactory.CreateAllman()).Format(code);
+
+            return formattedCode;
         }
 
         private string GetCode_NameSpaceAndBelow()
         {
             var code =
                 string.Format(
-                    "namespace {0}\r{{\r\tpublic class {1} : Rouse.Sales.RulesEngine\r\t{{\rpublic {1} (object data) {{}}\r{2}{3}{4}{5}{6}{7}\r\t}}\r}}",
+                    "namespace {0}\r{{\r\tpublic class {1} : Sample.RulesEngine\r\t{{\rpublic {1} (object data) {{}}\r{2}{3}{4}{5}{6}{7}\r\t}}\r}}",
                     Namespace,
                     ClassName,
                     GetCode_PrivateAssetClass(),
@@ -174,7 +199,7 @@ namespace Sample
                     .Aggregate(code,
                         (current, column) =>
                             current +
-                            (column.DataTypeName == "String"
+                            ("System.String/String/string".Split('/').Contains(column.DataTypeName)
                                 ? string.Format("case \"{0}\": {1} = field.Value; break;", column.ColumnName,
                                     column.LocalVariableName)
                                 : string.Format(
@@ -233,7 +258,7 @@ namespace Sample
             var code = string.Format("private object MapVariablesToOutput_{0:N}() {{\rreturn new Dictionary<string, string>{{", Randomizer);
 
             code += string.Join(", ", _variables
-                .Select(variableInfo => variableInfo.DataTypeName == "String"
+                .Select(variableInfo => "System.String/String/string".Split('/').Contains(variableInfo.DataTypeName)
                     ? string.Format(
                         "{{ \"{0}\", Variables.{0}}}\r",
                         variableInfo.Name)

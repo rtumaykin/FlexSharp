@@ -57,10 +57,18 @@
 {
 public class AssetFieldDataRow
 	{
-public global::System.String AssetNumber { get; private set; }		public global::System.Int16? ColumnId { get; private set; }		public global::System.String Value { get; private set; }		public AssetFieldDataRow(global::System.String assetNumber, global::System.Int16? columnId, global::System.String value)
+public global::System.String AssetNumber { get; private set; }
+
+		public global::System.Int16? ColumnId { get; private set; }
+
+		public global::System.String Value { get; private set; }
+		public AssetFieldDataRow(global::System.String assetNumber, global::System.Int16? columnId, global::System.String value)
 		{
-			this.AssetNumber = assetNumber;			this.ColumnId = columnId;			this.Value = value;
-		}	}
+			this.AssetNumber = assetNumber;
+			this.ColumnId = columnId;
+			this.Value = value;
+		}
+	}
 public class AssetFieldData : global::System.Collections.Generic.List<AssetFieldDataRow>
 	{
 public AssetFieldData(global::System.Collections.Generic.IEnumerable<AssetFieldDataRow> collection)
@@ -69,11 +77,20 @@ public AssetFieldData(global::System.Collections.Generic.IEnumerable<AssetFieldD
 		}
 internal global::System.Data.DataTable GetDataTable()
 		{
-			var dt = new global::System.Data.DataTable();			dt.Columns.Add("AssetNumber", typeof(System.String));			dt.Columns.Add("ColumnId", typeof(System.Int16));			dt.Columns.Add("Value", typeof(System.String));
-			dt.AcceptChanges();			foreach (var item in this)
+			var dt = new global::System.Data.DataTable();
+			dt.Columns.Add("AssetNumber", typeof(System.String));
+			dt.Columns.Add("ColumnId", typeof(System.Int16));
+			dt.Columns.Add("Value", typeof(System.String));
+			dt.AcceptChanges();
+			foreach (var item in this)
 			{
 				var row = dt.NewRow();
-				row[0] = item.AssetNumber;				row[1] = item.ColumnId;				row[2] = item.Value;				dt.Rows.Add(row);			}			return dt;
+				row[0] = item.AssetNumber;
+				row[1] = item.ColumnId;
+				row[2] = item.Value;
+				dt.Rows.Add(row);
+			}
+			return dt;
 		}
 
 	}
