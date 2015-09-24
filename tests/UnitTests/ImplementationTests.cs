@@ -24,20 +24,21 @@ namespace UnitTests
             var code1 = cf1.GetCodeInternal();
             var cfres1 = cf1.CompileAndSave("client1");
 
-            Assert.That(cfres1.Errors.Count == 0, "There were {0} errors during the compilation. First one was {1}.\rCode: \r{2}",
-                cfres1.Errors.Count, cfres1.Errors[0].ErrorText, code1);
+            Assert.That(cfres1.Errors.Count == 0,
+                "There were {0} errors during the compilation. First one was {1}.\rCode: \r{2}",
+                cfres1.Errors.Count, cfres1.Errors.Count > 0 ? cfres1.Errors[0].ErrorText : "", code1);
             
             var cf2 = new Sample.SampleCodeFactory(pfp, new CodeFactoryInitializationModel { ClientId = 2 });
             var code2 = cf2.GetCodeInternal();
             var cfres2 = cf2.CompileAndSave("client2");
 
             Assert.That(cfres2.Errors.Count == 0, "There were {0} errors during the compilation. First one was {1}.\rCode: \r{2}",
-                cfres2.Errors.Count, cfres2.Errors[0].ErrorText, code2);
+                cfres2.Errors.Count, cfres2.Errors.Count > 0 ? cfres2.Errors[0].ErrorText : "", code2);
 
             var ha = new HotAssembly.InstantiatorFactory<Sample.RulesEngine>(pfp);
             ha.Instantiate("client1");
             ha.Instantiate("client2");
-            Debug.WriteLine(string.Format("Took {0} ms to prepare all", DateTime.Now.Subtract(start1).TotalMilliseconds));
+            Debug.WriteLine($"Took {DateTime.Now.Subtract(start1).TotalMilliseconds} ms to prepare all");
 
             var start = DateTime.Now;
             for (var i = 0; i < 1000000; i++)
@@ -49,8 +50,20 @@ namespace UnitTests
                 var data2 = DataEmulator.GetSampleData(2);
                 var res2 = ha.Instantiate("client2").Compute(data2);
             }
-            Debug.WriteLine(string.Format("Took {0} ms for {1} cycles", DateTime.Now.Subtract(start).TotalMilliseconds,
-                1000000));
+            Debug.WriteLine($"Took {DateTime.Now.Subtract(start).TotalMilliseconds} ms for {1000000} cycles");
+        }
+
+        [Test]
+        public void Should_Successfully_Check_Syntax()
+        {
+            var pfp = new FilePersistenceProvider();
+            var cf1 = new Sample.SampleCodeFactory(pfp, new CodeFactoryInitializationModel { ClientId = 1 });
+            var code1 = cf1.GetCodeInternal();
+            var cfres1 = cf1.CheckSyntax();
+
+            Assert.That(cfres1.Errors.Count == 0,
+                "There were {0} errors during the compilation. First one was {1}.\rCode: \r{2}",
+                cfres1.Errors.Count, cfres1.Errors.Count > 0 ? cfres1.Errors[0].ErrorText : "", code1);
         }
     }
 
@@ -65,14 +78,14 @@ namespace UnitTests
 
         public void GetBundle(string bundleId, string destinationPath)
         {
-            File.Copy(Path.Combine(PersistedPath, bundleId, string.Format("{0}.zip", bundleId)), destinationPath, true);
+            File.Copy(Path.Combine(PersistedPath, bundleId, $"{bundleId}.zip"), destinationPath, true);
         }
 
         public void PersistBundle(string bundleId, string sourcePath)
         {
             var destinationPath = Path.Combine(PersistedPath, bundleId);
             Directory.CreateDirectory(destinationPath);
-            File.Copy(sourcePath, Path.Combine(PersistedPath, bundleId, string.Format("{0}.zip", bundleId)));
+            File.Copy(sourcePath, Path.Combine(PersistedPath, bundleId, $"{bundleId}.zip"));
         }
     }
 
@@ -90,7 +103,7 @@ namespace UnitTests
             {
                 {"EquipmentNumber", RandomString(15)},
                 {"YearPurchased", new Random().Next(1997, 2015).ToString()},
-                {"MakeModel", String.Format("{0}/{1}", makeModel.Item1, makeModel.Item2)},
+                {"MakeModel", $"{makeModel.Item1}/{makeModel.Item2}"},
                 {"Cost", new Random().Next(1000, 30000).ToString()},
                 {"HoursUsedLast12Months", new Random().Next(10, 1000).ToString()},
                 {"GarageStorage", (new Random().Next(0, 1) == 0).ToString()},

@@ -149,15 +149,13 @@ namespace Sample
         private string GetCode_PrivateVariablesClass()
         {
             // build the class definition and properties
-            var code = string.Format("private class Variables_{0:N} {{", Randomizer);
+            var code = $"private class Variables_{Randomizer:N} {{";
 
             code = _variables
                 .Aggregate(code,
                 (current, variable) =>
                     current +
-                    string.Format("public {0} {1} {{ get; private set; }}\r",
-                        variable.FullDataTypeName,
-                        variable.Name));
+                    $"public {variable.FullDataTypeName} {variable.Name} {{ get; private set; }}\r");
 
             // build setters
             code =
@@ -181,13 +179,13 @@ namespace Sample
 
         private string GetCode_MapDataToAsset()
         {
-            var code = string.Format("private void MapDataToAsset_{0:N}() {{\r", Randomizer);
+            var code = $"private void MapDataToAsset_{Randomizer:N}() {{\r";
 
             // initialize all local variables to null
             code = _columns
                 .Aggregate(code,
                     (current, column) =>
-                        current + string.Format("{0} {1} = null;\r", column.FullDataTypeName, column.LocalVariableName));
+                        current + $"{column.FullDataTypeName} {column.LocalVariableName} = null;\r");
 
             // map incoming object to the internal object
             code += "foreach (var field in Data)\r{\rswitch (field.Key)\r{";
@@ -198,8 +196,7 @@ namespace Sample
                         (current, column) =>
                             current +
                             ("System.String/String/string".Split('/').Contains(column.DataTypeName)
-                                ? string.Format("case \"{0}\": {1} = field.Value; break;", column.ColumnName,
-                                    column.LocalVariableName)
+                                ? $"case \"{column.ColumnName}\": {column.LocalVariableName} = field.Value; break;"
                                 : string.Format(
                                     "case \"{0}\": {{{2} outValue; {1} = {2}.TryParse(field.Value, out outValue) ? outValue : ({2}?)null;}} break;",
                                     column.ColumnName, column.LocalVariableName, column.DataTypeName)));
@@ -207,7 +204,7 @@ namespace Sample
             code += string.Format("}} _asset_{0:N} = new Asset_{0:N} (", Randomizer);
 
             code += string.Join(", ", _columns
-                .Select(column => string.Format("{0}", column.LocalVariableName)));
+                .Select(column => $"{column.LocalVariableName}"));
 
             code += ");\r}\r}";
             return code;
@@ -227,8 +224,8 @@ namespace Sample
         private string GetCode_Variables()
         {
             return string.Join("\r", _variables.OrderBy(v => v.EvaluationOrder).Select(
-                variable => string.Format("private {0} Compute_{1}_{2:N}(){{\r{3}\r}}\r", variable.FullDataTypeName,
-                    variable.Name, Randomizer, variable.Formula)));
+                variable =>
+                    $"private {variable.FullDataTypeName} Compute_{variable.Name}_{Randomizer:N}(){{\r{variable.Formula}\r}}\r"));
         }
 
         private string GetCode_ComputeInternal()
@@ -253,7 +250,8 @@ namespace Sample
         /// <returns></returns>
         private string GetCode_MapOutput()
         {
-            var code = string.Format("private object MapVariablesToOutput_{0:N}() {{\rreturn new Dictionary<string, string>{{", Randomizer);
+            var code =
+                $"private object MapVariablesToOutput_{Randomizer:N}() {{\rreturn new Dictionary<string, string>{{";
 
             code += string.Join(", ", _variables
                 .Select(variableInfo => "System.String/String/string".Split('/').Contains(variableInfo.DataTypeName)
@@ -276,23 +274,19 @@ namespace Sample
         {
 
             // build the class definition and properties
-            var code = string.Format("private class Asset_{0:N} {{", Randomizer);
+            var code = $"private class Asset_{Randomizer:N} {{";
 
             code = _columns
                 .Aggregate(code,
                 (current, column) =>
                     current +
-                    string.Format("public {0} {1} {{ get; private set; }}\r",
-                        column.FullDataTypeName,
-                        column.ColumnName));
+                    $"public {column.FullDataTypeName} {column.ColumnName} {{ get; private set; }}\r");
 
             // build constructor
-            code += string.Format("\rpublic Asset_{0:N}(", Randomizer);
+            code += $"\rpublic Asset_{Randomizer:N}(";
 
             code += string.Join(", ", _columns
-                .Select(column => string.Format("{0} {1}",
-                    column.FullDataTypeName,
-                    column.LocalVariableName)));
+                .Select(column => $"{column.FullDataTypeName} {column.LocalVariableName}"));
 
             code += "){";
             code = _columns

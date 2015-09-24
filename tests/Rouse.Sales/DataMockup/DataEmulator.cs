@@ -36,7 +36,7 @@ namespace Sample.DataMockup
             if (new[] {1, 2}.Contains(clientId))
                 return clientId == 1 ? Client1Fields : Client2Fields;
 
-            throw new Exception(string.Format("Invalid ClientId {0}", clientId));
+            throw new Exception($"Invalid ClientId {clientId}");
         }
 
         private static readonly Variable[] Client1VariablesCollection = new Variable[]

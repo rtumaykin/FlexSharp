@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HotAssembly, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HotAssembly.0.9.4\lib\net45\HotAssembly.dll</HintPath>
+    <Reference Include="HotAssembly, Version=0.9.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HotAssembly.0.9.6\lib\net45\HotAssembly.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.NRefactory, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
@@ -52,10 +52,6 @@
       <HintPath>..\..\packages\ICSharpCode.NRefactory.5.5.1\lib\Net40\ICSharpCode.NRefactory.Xml.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
       <Private>True</Private>
@@ -72,8 +68,8 @@
       <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
