@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexSharp", "source\FlexSha
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{30777170-B456-4143-9BB8-9BC174016D09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rouse.Sales", "tests\Rouse.Sales\Rouse.Sales.csproj", "{38882AA6-FFC5-4C7C-86CA-579DC3544A77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "tests\Rouse.Sales\Sample.csproj", "{38882AA6-FFC5-4C7C-86CA-579DC3544A77}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{4491D80C-68B2-4CBC-AF69-394280AB3B33}"
 EndProject

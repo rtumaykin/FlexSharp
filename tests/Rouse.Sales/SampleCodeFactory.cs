@@ -1,24 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FlexSharp;
 using HotAssembly;
-using Rouse.Sales.Rules.Enums.common;
-using Rouse.Sales.Rules.Executables.RulesRepository;
+using ICSharpCode.NRefactory.CSharp;
+using Sample.DataMockup;
 
-namespace Rouse.Sales
+namespace Sample
 {
-    public class RouseCodeFactory :CodeFactory  
+    public class SampleCodeFactory : CodeFactory
     {
+        private readonly int _clientId;
 
-        public RouseCodeFactory(IPersistenceProvider hotAssemblyPersistenceProvider, CodeFactoryInitializationModel data) 
+        public SampleCodeFactory(IPersistenceProvider hotAssemblyPersistenceProvider, CodeFactoryInitializationModel data) 
             : base(hotAssemblyPersistenceProvider, data)
         {
+            _clientId = data.ClientId;
         }
 
-        private class ColumnInfo
+        private class FieldInfo
         {
             public string ColumnName
             {
@@ -26,11 +25,6 @@ namespace Rouse.Sales
                 set;
             }
             public string DataTypeName
-            {
-                get;
-                set;
-            }
-            public Column_Source ColumnSource
             {
                 get;
                 set;
@@ -48,7 +42,7 @@ namespace Rouse.Sales
             {
                 get
                 {
-                    return DataTypeName + (DataTypeName == "String" ? "" : "?");
+                    return DataTypeName + ("System.String/String/string".Split('/').Contains(DataTypeName) ? "" : "?");
                 }
             }
 
@@ -66,7 +60,7 @@ namespace Rouse.Sales
                 get;
                 set;
             }
-            public string ColumnName
+            public int EvaluationOrder
             {
                 get;
                 set;
@@ -80,7 +74,7 @@ namespace Rouse.Sales
             {
                 get
                 {
-                    return DataTypeName + (DataTypeName == "String" ? "" : "?");
+                    return DataTypeName + ("System.String/String/string".Split('/').Contains(DataTypeName) ? "" : "?");
                 }
             }
             public string LocalVariableName
@@ -93,23 +87,53 @@ namespace Rouse.Sales
         }
 
         private IList<VariableInfo> _variables;
-        private IList<ColumnInfo> _columns;
+        private IList<FieldInfo> _columns;
 
+#if DEBUG
+        public string GetCodeInternal()
+        {
+            return GetCode();
+        }
+#endif
 
         protected override string GetCode()
         {
-            GetColumnsInfo();
+            GetFieldsInfo();
             GetVariablesInfo();
             var code = "using System;\rusing System.Collections.Generic;\rusing System.Linq;\r" + GetCode_NameSpaceAndBelow();
 
-            return code;
+            var formattingOptions = FormattingOptionsFactory.CreateAllman();
+            formattingOptions.AlignElseInIfStatements = true;
+            formattingOptions.ArrayInitializerWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.ChainedMethodCallWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.AutoPropertyFormatting = PropertyFormatting.ForceOneLine;
+            formattingOptions.IndexerArgumentWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.IndexerClosingBracketOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.IndexerDeclarationClosingBracketOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.IndexerDeclarationParameterWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.MethodCallArgumentWrapping = Wrapping.WrapIfTooLong;
+            formattingOptions.MethodCallClosingParenthesesOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.MethodDeclarationClosingParenthesesOnNewLine = NewLinePlacement.SameLine;
+            formattingOptions.MethodDeclarationParameterWrapping = Wrapping.WrapIfTooLong;
+
+            formattingOptions.NewLineAferIndexerDeclarationOpenBracket = NewLinePlacement.SameLine;
+            formattingOptions.NewLineAferIndexerOpenBracket = NewLinePlacement.SameLine;
+            formattingOptions.NewLineAferMethodCallOpenParentheses = NewLinePlacement.SameLine;
+            formattingOptions.NewLineAferMethodDeclarationOpenParentheses = NewLinePlacement.SameLine;
+
+
+
+
+            var formattedCode = new CSharpFormatter(FormattingOptionsFactory.CreateAllman()).Format(code);
+
+            return formattedCode;
         }
 
         private string GetCode_NameSpaceAndBelow()
         {
             var code =
                 string.Format(
-                    "namespace {0}\r{{\r\tpublic class {1} : Rouse.Sales.RulesEngine\r\t{{\rpublic {1} (object data) {{}}\r{2}{3}{4}{5}{6}{7}\r\t}}\r}}",
+                    "namespace {0}\r{{\r\tpublic class {1} : Sample.RulesEngine\r\t{{\rpublic {1} () {{}}\r{2}{3}{4}{5}{6}{7}\r\t}}\r}}",
                     Namespace,
                     ClassName,
                     GetCode_PrivateAssetClass(),
@@ -125,15 +149,13 @@ namespace Rouse.Sales
         private string GetCode_PrivateVariablesClass()
         {
             // build the class definition and properties
-            var code = string.Format("private class Variables_{0:N} {{", Randomizer);
+            var code = $"private class Variables_{Randomizer:N} {{";
 
             code = _variables
                 .Aggregate(code,
                 (current, variable) =>
                     current +
-                    string.Format("public {0} {1} {{ get; private set; }}\r",
-                        variable.FullDataTypeName,
-                        variable.Name));
+                    $"public {variable.FullDataTypeName} {variable.Name} {{ get; private set; }}\r");
 
             // build setters
             code =
@@ -157,33 +179,32 @@ namespace Rouse.Sales
 
         private string GetCode_MapDataToAsset()
         {
-            var code = string.Format("private void MapDataToAsset_{0:N}() {{\r", Randomizer);
+            var code = $"private void MapDataToAsset_{Randomizer:N}() {{\r";
 
             // initialize all local variables to null
-            code = _columns.Where(column => column.ColumnSource == Column_Source.External)
+            code = _columns
                 .Aggregate(code,
                     (current, column) =>
-                        current + string.Format("{0} {1} = null;\r", column.FullDataTypeName, column.LocalVariableName));
+                        current + $"{column.FullDataTypeName} {column.LocalVariableName} = null;\r");
 
             // map incoming object to the internal object
             code += "foreach (var field in Data)\r{\rswitch (field.Key)\r{";
 
             code =
-                _columns.Where(column => column.ColumnSource == Column_Source.External)
+                _columns
                     .Aggregate(code,
                         (current, column) =>
                             current +
-                            (column.DataTypeName == "String"
-                                ? string.Format("case \"{0}\": {1} = field.Value; break;", column.ColumnName,
-                                    column.LocalVariableName)
+                            ("System.String/String/string".Split('/').Contains(column.DataTypeName)
+                                ? $"case \"{column.ColumnName}\": {column.LocalVariableName} = field.Value; break;"
                                 : string.Format(
                                     "case \"{0}\": {{{2} outValue; {1} = {2}.TryParse(field.Value, out outValue) ? outValue : ({2}?)null;}} break;",
                                     column.ColumnName, column.LocalVariableName, column.DataTypeName)));
 
             code += string.Format("}} _asset_{0:N} = new Asset_{0:N} (", Randomizer);
 
-            code += string.Join(", ", _columns.Where(column => column.ColumnSource == Column_Source.External)
-                .Select(column => string.Format("{0}", column.LocalVariableName)));
+            code += string.Join(", ", _columns
+                .Select(column => $"{column.LocalVariableName}"));
 
             code += ");\r}\r}";
             return code;
@@ -191,24 +212,20 @@ namespace Rouse.Sales
 
         private void GetVariablesInfo()
         {
-            _variables =
-                Variables_List.Execute(GetInitializationData<CodeFactoryInitializationModel>().ClientId, null)
-                    .Recordset0.Select(
-                        record => new VariableInfo
-                        {
-                            ColumnName = record.OutputColumnName,
-                            Formula = record.Formula,
-                            Name = record.Name,
-                            DataTypeName = record.DataTypeName
-                        }
-                    ).ToList();
+            _variables = DataEmulator.GetVariablesCollection(_clientId).Select(v => new VariableInfo
+            {
+                Name = v.Name,
+                Formula = v.Formula,
+                EvaluationOrder = v.EvaluationOrder,
+                DataTypeName = v.DataType
+            }).ToList();
         }
 
         private string GetCode_Variables()
         {
-            return string.Join("\r", _variables.Select(
-                variable => string.Format("private {0} Compute_{1}_{2:N}(){{\r{3}\r}}\r", variable.FullDataTypeName,
-                    variable.Name, Randomizer, variable.Formula)));
+            return string.Join("\r", _variables.OrderBy(v => v.EvaluationOrder).Select(
+                variable =>
+                    $"private {variable.FullDataTypeName} Compute_{variable.Name}_{Randomizer:N}(){{\r{variable.Formula}\r}}\r"));
         }
 
         private string GetCode_ComputeInternal()
@@ -233,11 +250,11 @@ namespace Rouse.Sales
         /// <returns></returns>
         private string GetCode_MapOutput()
         {
-            var code = string.Format("private object MapVariablesToOutput_{0:N}() {{\rreturn new Dictionary<string, string>{{", Randomizer);
+            var code =
+                $"private object MapVariablesToOutput_{Randomizer:N}() {{\rreturn new Dictionary<string, string>{{";
 
             code += string.Join(", ", _variables
-                .Where(variableInfo => !string.IsNullOrWhiteSpace(variableInfo.ColumnName))
-                .Select(variableInfo => variableInfo.DataTypeName == "String"
+                .Select(variableInfo => "System.String/String/string".Split('/').Contains(variableInfo.DataTypeName)
                     ? string.Format(
                         "{{ \"{0}\", Variables.{0}}}\r",
                         variableInfo.Name)
@@ -257,29 +274,22 @@ namespace Rouse.Sales
         {
 
             // build the class definition and properties
-            var code = string.Format("private class Asset_{0:N} {{", Randomizer);
+            var code = $"private class Asset_{Randomizer:N} {{";
 
             code = _columns
-                .Where(columnInfo => columnInfo.ColumnSource != Column_Source.Computed)
                 .Aggregate(code,
                 (current, column) =>
                     current +
-                    string.Format("public {0} {1} {{ get; private set; }}\r",
-                        column.FullDataTypeName,
-                        column.ColumnName));
+                    $"public {column.FullDataTypeName} {column.ColumnName} {{ get; private set; }}\r");
 
             // build constructor
-            code += string.Format("\rpublic Asset_{0:N}(", Randomizer);
+            code += $"\rpublic Asset_{Randomizer:N}(";
 
             code += string.Join(", ", _columns
-                .Where(column => column.ColumnSource != Column_Source.Computed)
-                .Select(column => string.Format("{0} {1}",
-                    column.FullDataTypeName,
-                    column.LocalVariableName)));
+                .Select(column => $"{column.FullDataTypeName} {column.LocalVariableName}"));
 
             code += "){";
             code = _columns
-                .Where(column => column.ColumnSource != Column_Source.Computed)
                 .Aggregate(code,
                     (current, column) =>
                         current +
@@ -295,15 +305,13 @@ namespace Rouse.Sales
             return code;
         }
 
-        private void GetColumnsInfo()
+        private void GetFieldsInfo()
         {
-            _columns = Columns_List.Execute(GetInitializationData<CodeFactoryInitializationModel>().ClientId, null)
-                .Recordset0.Select(record => new ColumnInfo
-                {
-                    ColumnName = record.ColumnName,
-                    DataTypeName = record.DataTypeName,
-                    ColumnSource = (Column_Source)record.SourceId
-                }).ToList();
+            _columns = DataEmulator.GetClientFields(_clientId).Select(f => new FieldInfo
+            {
+                ColumnName = f.Name,
+                DataTypeName = f.DataType
+            }).ToList();
         }
 
     }

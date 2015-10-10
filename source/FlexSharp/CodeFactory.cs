@@ -1,12 +1,9 @@
 ﻿using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HotAssembly;
-using Ionic.Zip;
 using Newtonsoft.Json;
 
 namespace FlexSharp
@@ -26,14 +23,14 @@ namespace FlexSharp
 
         protected string Namespace
         {
-            get { return string.Format("ns_{0:N}", Randomizer); }
+            get { return $"ns_{Randomizer:N}"; }
         }
 
         protected string ClassName
         {
             get
             {
-                return string.Format("class_{0:N}", Randomizer);
+                return $"class_{Randomizer:N}";
             }
         }
 
@@ -71,7 +68,7 @@ namespace FlexSharp
             };
         }
 
-        protected CompilerResults CompileInternal(bool checkSyntaxOnly)
+        protected CompilerResults CompileInternal()
         {
             var code = GetCode();
 
@@ -92,8 +89,7 @@ namespace FlexSharp
                   typeof(Compiler).FullName);
 
 
-                var compilerResults = compiler.Compile(code, checkSyntaxOnly,
-                    checkSyntaxOnly ? null : Path.Combine(Path.GetTempPath(), string.Format("{0:N}.dll", Randomizer)),
+                var compilerResults = compiler.Compile(code, 
                     GetReferencedAssemblies().GroupBy(s => s).Select(x => x.First()).ToArray());
 
                 return compilerResults;
@@ -104,39 +100,37 @@ namespace FlexSharp
             }
         }
 
-        public CompilerResults CompileAndSave()
+        public CompilerResults CompileAndSave(string bundleId)
         {
-            var ret = CompileInternal(false);
+            var ret = CompileInternal();
 
-            if (ret.Errors.Count == 0)
+            if (ret.Errors.Count != 0)
+                return ret;
+
+            var manifest = new Manifest
             {
-                var manifest = new Manifest
-                {
-                    AssemblyName = Path.GetFileName(ret.PathToAssembly),
-                    FullyQualifiedClassName = string.Format("{0}.{1}", Namespace, ClassName)
-                };
+                AssemblyName = Path.GetFileName(ret.PathToAssembly),
+                FullyQualifiedClassName = $"{Namespace}.{ClassName}"
+            };
 
-                var tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-                Directory.CreateDirectory(tempFolder);
+            var tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(tempFolder);
 
-                File.WriteAllText(Path.Combine(tempFolder, "manifest.json"), JsonConvert.SerializeObject(manifest));
+            File.WriteAllText(Path.Combine(tempFolder, "manifest.json"), JsonConvert.SerializeObject(manifest));
+            File.Copy(ret.PathToAssembly, Path.Combine(tempFolder, Path.GetFileName(ret.PathToAssembly)));
 
-                using (var zip = new ZipFile())
-                {
-                    zip.AddFile(Path.Combine(tempFolder, "manifest.json"), "");
-                    zip.AddFile(ret.PathToAssembly, "");
-                    zip.Save(Path.Combine(tempFolder, "bundle.zip"));
-                }
 
-                _hotAssemblyPersistenceProvider.PersistBundle(Randomizer.ToString("N"), Path.Combine(tempFolder, "bundle.zip"));
-            }
+            Directory.CreateDirectory($"{tempFolder}-1");
+            ZipFile.CreateFromDirectory(tempFolder, Path.Combine($"{tempFolder}-1", "bundle.zip"));
+
+            _hotAssemblyPersistenceProvider.PersistBundle(bundleId, Path.Combine($"{tempFolder}-1", "bundle.zip"));
 
             return ret;
         }
 
         public CompilerResults CheckSyntax()
         {
-            return CompileInternal(true);
+            return CompileInternal();
         }
 
     }

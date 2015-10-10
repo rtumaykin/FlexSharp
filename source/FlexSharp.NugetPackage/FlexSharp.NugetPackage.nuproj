@@ -19,7 +19,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>FlexSharp</Id>
-    <Version>0.9.0</Version>
+    <Version>0.9.6</Version>
     <Title>FlexSharp</Title>
     <Authors>Roman Tumaykin</Authors>
     <Owners>Roman Tumaykin</Owners>
@@ -33,6 +33,7 @@
     </LicenseUrl>
     <Copyright>Copyright © 2015 Roman Tumaykin</Copyright>
     <Tags>FlexSharp.NugetPackage</Tags>
+    <EmbedSourceFiles>true</EmbedSourceFiles>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Readme.txt" />
