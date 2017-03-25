@@ -35,11 +35,11 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>FlexSharp.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>FlexSharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HotAssembly, Version=0.9.7.0, Culture=neutral, PublicKeyToken=01af6f1894b514f1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HotAssembly.0.9.7\lib\net45\HotAssembly.dll</HintPath>
+    <Reference Include="HotAssembly, Version=0.9.8.0, Culture=neutral, PublicKeyToken=9dc6d0afcae3f15a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HotAssembly.0.9.8\lib\net45\HotAssembly.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -61,7 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FlexSharp.pfx" />
+    <None Include="FlexSharp.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
